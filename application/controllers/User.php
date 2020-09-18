@@ -27,8 +27,9 @@ class User extends CI_Controller
     {
         $data['title'] = 'Edit Profile';
         $data['user'] = $this->db->get_where('user', ['email' => $this->session->userdata('email')])->row_array();
+        $data['artikel'] = $this->db->get_where('tugas_akhir', ['email1' => $this->session->userdata('email')])->row_array();
 
-        $this->form_validation->set_rules('name', 'Full Name', 'required|trim');
+        $this->form_validation->set_rules('detail', 'Detail Artikel', 'required|trim');
 
         if ($this->form_validation->run() == false) {
             $this->load->view('templates/header', $data);
@@ -37,34 +38,32 @@ class User extends CI_Controller
             $this->load->view('user/edit', $data);
             $this->load->view('templates/footer');
         } else {
-            $name = $this->input->post('name');
-            $email = $this->input->post('email');
+            $detail = $this->input->post('detail');
 
             // cek jika ada gambar yang akan diupload
-            $upload_image = $_FILES['image']['name'];
-
-            if ($upload_image) {
-                $config['allowed_types'] = 'gif|jpg|png';
-                $config['max_size']      = '2048';
-                $config['upload_path'] = './assets/img/profile/';
-
-                $this->load->library('upload', $config);
-
-                if ($this->upload->do_upload('image')) {
-                    $old_image = $data['user']['image'];
-                    if ($old_image != 'default.jpg') {
-                        unlink(FCPATH . 'assets/img/profile/' . $old_image);
-                    }
-                    $new_image = $this->upload->data('file_name');
-                    $this->db->set('image', $new_image);
-                } else {
-                    echo $this->upload->dispay_errors();
+            $file = null;
+            if(isset($_FILES['file'])){
+			
+				$config['upload_path']   = "./assets/upload/"; 
+				$config['allowed_types'] = 'pdf'; 
+				$config['encrypt_name']  = true; 
+				$config['max_size']      = 5000;  
+				$this->load->library('upload', $config);
+				
+				if($this->upload->do_upload('file')){
+					$file = $this->upload->data();
+                    
+                    $url = base_url().'assets/upload/'.$file['file_name'];
+                    
+                    $this->db->set('file_directory', $file['full_path']);
+                    $this->db->set('file_name', $file['orig_name']);
+                    $this->db->set('file_url', $url);
                 }
             }
-
-            $this->db->set('name', $name);
-            $this->db->where('email', $email);
-            $this->db->update('user');
+            
+            $this->db->set('judul', $detail);
+            $this->db->where('email1', $this->session->userdata('email'));
+            $this->db->update('tugas_akhir');
 
             $this->session->set_flashdata('message', '<div class="alert alert-success" role="alert">Your profile has been updated!</div>');
             redirect('user');

@@ -8,6 +8,11 @@
     <div class="row">
         <div class="col-lg-8">
 
+<pre>
+<?php var_dump($user);?>
+<?php var_dump($artikel);?>
+</pre>
+
             <?= form_open_multipart('user/edit'); ?>
             <div class="form-group row">
                 <label for="email" class="col-sm-2 col-form-label">Username</label>
@@ -18,15 +23,15 @@
             <div class="form-group row">
                 <label for="textarea" class="col-sm-2 col-form-label">Informasi Aplikasi</label>
                 <div class="col-sm-10">
-                    <textarea class="form-control" id="detail" rows="10"></textarea>
+                    <textarea class="form-control" id="detail" name="detail" rows="10"></textarea>
                 </div>
             </div>
             <div class="form-group row">
                 <div class="col-sm-2">Manual Book</div>
                         <div class="col-sm-10">
                             <div class="custom-file">
-                                <input type="file" class="custom-file-input" id="image" name="image">
-                                <label class="custom-file-label" for="image">Choose file</label>
+                                <input type="file" class="custom-file-input" id="file" name="file">
+                                <label class="custom-file-label" for="file">Choose file</label>
                             </div>
                         </div>
                     </div>
