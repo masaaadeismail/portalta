@@ -14,7 +14,6 @@ class User extends CI_Controller
     public function index()
     {
         $data['title'] = 'My Profile';
-        // model
         $data['user'] = $this->user->getUserData();
         $this->load->view('templates/header', $data);
         $this->load->view('templates/sidebar', $data);
@@ -55,6 +54,7 @@ class User extends CI_Controller
                     
                     $url = base_url().'assets/upload/'.$file['file_name'];
                     
+                    // Jika ada file yang di upload maka tambahkan value untuk kolom file_* pada tabel  tugas_akhir
                     $this->db->set('file_directory', $file['full_path']);
                     $this->db->set('file_name', $file['orig_name']);
                     $this->db->set('file_url', $url);
