@@ -14,7 +14,6 @@ class User extends CI_Controller
     public function index()
     {
         $data['title'] = 'My Profile';
-        // model
         $data['user'] = $this->user->getUserData();
         $this->load->view('templates/header', $data);
         $this->load->view('templates/sidebar', $data);
@@ -25,9 +24,10 @@ class User extends CI_Controller
 
     public function edit()
     {
-        $data['title'] = 'Edit Profile';
-        $data['user'] = $this->db->get_where('user', ['email' => $this->session->userdata('email')])->row_array();
-        $data['artikel'] = $this->db->get_where('tugas_akhir', ['email1' => $this->session->userdata('email')])->row_array();
+        $data['title']  = 'Edit Profile';
+        $user_email     = $this->session->userdata('email');
+        $data['user']   = $this->db->get_where('user', ['email' => $user_email])->row_array();
+        $data['artikel'] = $this->db->get_where('tugas_akhir', ['email1' => $user_email])->row_array();
 
         $this->form_validation->set_rules('detail', 'Detail Artikel', 'required|trim');
 
@@ -45,9 +45,9 @@ class User extends CI_Controller
             if(isset($_FILES['file'])){
 			
 				$config['upload_path']   = "./assets/upload/"; 
-				$config['allowed_types'] = 'pdf'; 
+				$config['allowed_types'] = 'doc|docx|pdf'; 
 				$config['encrypt_name']  = true; 
-				$config['max_size']      = 5000;  
+				$config['max_size']      = 3000;  
 				$this->load->library('upload', $config);
 				
 				if($this->upload->do_upload('file')){
@@ -55,6 +55,7 @@ class User extends CI_Controller
                     
                     $url = base_url().'assets/upload/'.$file['file_name'];
                     
+                    // Jika ada file yang di upload maka tambahkan value untuk kolom file_* pada tabel  tugas_akhir
                     $this->db->set('file_directory', $file['full_path']);
                     $this->db->set('file_name', $file['orig_name']);
                     $this->db->set('file_url', $url);
@@ -62,7 +63,7 @@ class User extends CI_Controller
             }
             
             $this->db->set('judul', $detail);
-            $this->db->where('email1', $this->session->userdata('email'));
+            $this->db->where('email1', $user_email);
             $this->db->update('tugas_akhir');
 
             $this->session->set_flashdata('message', '<div class="alert alert-success" role="alert">Your profile has been updated!</div>');
